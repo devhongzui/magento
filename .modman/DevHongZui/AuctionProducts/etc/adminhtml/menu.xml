@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="DevHongZui_AuctionProducts::auction_products" title="Auction Product" translate="title"
+             module="DevHongZui_AuctionProducts" parent="DevHongZui_MainExtension::main" sortOrder="10"
+             resource="DevHongZui_AuctionProducts::auction_products"/>
+        <add id="DevHongZui_AuctionProducts::auction_product_manage" title="Product Management" translate="title"
+             module="DevHongZui_AuctionProducts" sortOrder="10" parent="DevHongZui_AuctionProducts::auction_products"
+             action="auction/product/index" resource="DevHongZui_AuctionProducts::auction_product_manage"/>
+    </menu>
+</config>

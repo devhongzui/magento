@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="devhongzui_auctions" resource="default" engine="innodb"
+           comment="Auctions Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+        <column xsi:type="mediumtext" name="product_ids" nullable="false" comment="Product IDs"/>
+        <column xsi:type="decimal" name="start_price" scale="6" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Start Price"/>
+        <column xsi:type="decimal" name="step_price" scale="6" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Step Price"/>
+        <column xsi:type="decimal" name="reserve_price" scale="6" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Reserve Price"/>
+        <column xsi:type="decimal" name="limit_price" scale="6" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Limit Price"/>
+        <column xsi:type="timestamp" name="start_at" nullable="false" comment="Start Time"/>
+        <column xsi:type="timestamp" name="stop_at" nullable="false" comment="Stop Time"/>
+        <column xsi:type="smallint" name="days" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Win Day Can Buy"/>
+        <column xsi:type="tinyint" name="status" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Status"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Update Time"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+    </table>
+
+    <table name="devhongzui_auction_products" resource="default" engine="innodb" comment="Auction Products Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="int" name="auction_id" unsigned="true" nullable="false" identity="false"
+                comment="Auction ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product ID"/>
+        <column xsi:type="tinyint" name="status" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Status"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Update Time"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+
+        <index referenceId="ID1" indexType="btree">
+            <column name="auction_id"/>
+        </index>
+        <index referenceId="ID2" indexType="btree">
+            <column name="product_id"/>
+        </index>
+
+        <constraint xsi:type="foreign" referenceId="FK1" onDelete="CASCADE"
+                    table="devhongzui_auction_products" column="auction_id"
+                    referenceTable="devhongzui_auctions" referenceColumn="entity_id"/>
+        <constraint xsi:type="foreign" referenceId="FK2" onDelete="CASCADE"
+                    table="devhongzui_auction_products" column="product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="entity_id"/>
+    </table>
+
+    <table name="devhongzui_auction_bidders" resource="default" engine="innodb" comment="Auction Bidders Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="int" name="auction_id" unsigned="true" nullable="false" identity="false"
+                comment="Auction ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer ID"/>
+        <column xsi:type="tinyint" name="bid_status" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Bid Status"/>
+        <column xsi:type="tinyint" name="order_status" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Order Status"/>
+        <column xsi:type="decimal" name="bid_price" scale="6" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Bid Price"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Update Time"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+
+        <index referenceId="ID1" indexType="btree">
+            <column name="auction_id"/>
+        </index>
+        <index referenceId="ID2" indexType="btree">
+            <column name="product_id"/>
+        </index>
+        <index referenceId="ID3" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+
+        <constraint xsi:type="foreign" referenceId="FK1" onDelete="CASCADE"
+                    table="devhongzui_auction_bidders" column="auction_id"
+                    referenceTable="devhongzui_auctions" referenceColumn="entity_id"/>
+        <constraint xsi:type="foreign" referenceId="FK2" onDelete="CASCADE"
+                    table="devhongzui_auction_bidders" column="product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="entity_id"/>
+        <constraint xsi:type="foreign" referenceId="FK3" onDelete="CASCADE"
+                    table="devhongzui_auction_bidders" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id"/>
+    </table>
+</schema>

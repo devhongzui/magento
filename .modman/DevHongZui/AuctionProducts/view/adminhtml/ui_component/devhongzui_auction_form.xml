@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">devhongzui_auction_form.devhongzui_auction_form_data_source</item>
+            <item name="deps" xsi:type="string">devhongzui_auction_form.devhongzui_auction_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Product Management</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">devhongzui_auction_form</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">
+                DevHongZui\AuctionProducts\Block\Adminhtml\Button\Back
+            </item>
+            <item name="reset" xsi:type="string">
+                DevHongZui\AuctionProducts\Block\Adminhtml\Button\Reset
+            </item>
+            <item name="delete" xsi:type="string">
+                DevHongZui\AuctionProducts\Block\Adminhtml\Button\Delete
+            </item>
+            <item name="save_and_continue" xsi:type="string">
+                DevHongZui\AuctionProducts\Block\Adminhtml\Button\SaveAndContinue
+            </item>
+            <item name="save" xsi:type="string">
+                DevHongZui\AuctionProducts\Block\Adminhtml\Button\Save
+            </item>
+        </item>
+    </argument>
+    <settings>
+        <ajaxSave>false</ajaxSave>
+        <ajaxSaveType>simple</ajaxSaveType>
+        <layout>
+            <navContainerName>left</navContainerName>
+            <type>tabs</type>
+        </layout>
+    </settings>
+    <dataSource name="devhongzui_auction_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">
+                DevHongZui\AuctionProducts\Model\Auction\DataProvider
+            </argument>
+            <argument name="name" xsi:type="string">devhongzui_auction_form_data_source</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+            <argument name="primaryFieldName" xsi:type="string">entity_id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="submit_url" xsi:type="url" path="*/*/save"/>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">Auction Information</label>
+        </settings>
+        <field name="product_ids" sortOrder="10" formElement="textarea">
+            <settings>
+                <label translate="true">Product List</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-string" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="start_price" sortOrder="20" formElement="input">
+            <settings>
+                <label translate="true">Start Price</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-not-negative-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="step_price" sortOrder="30" formElement="input">
+            <settings>
+                <label translate="true">Step Price</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-not-negative-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="reserve_price" sortOrder="40" formElement="input">
+            <settings>
+                <label translate="true">Reserve Price</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-not-negative-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="limit_price" sortOrder="50" formElement="input">
+            <settings>
+                <label translate="true">Limit Price</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-not-negative-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="start_at" sortOrder="60" formElement="date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="options" xsi:type="array">
+                        <item name="dateFormat" xsi:type="string">dd-MM-YYYY</item>
+                        <item name="timeFormat" xsi:type="string">HH:mm:ss</item>
+                        <item name="showsTime" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Start At</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="stop_at" sortOrder="70" formElement="date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="options" xsi:type="array">
+                        <item name="dateFormat" xsi:type="string">dd-MM-YYYY</item>
+                        <item name="timeFormat" xsi:type="string">HH:mm:ss</item>
+                        <item name="showsTime" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Stop At</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="days" sortOrder="80" formElement="input">
+            <settings>
+                <label translate="true">Win Day Can Buy</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-not-negative-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="status" sortOrder="90" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="checked" xsi:type="boolean">true</item>
+                    <item name="valueMap" xsi:type="array">
+                        <item name="false" xsi:type="number">1</item>
+                        <item name="true" xsi:type="number">0</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Status</label>
+            </settings>
+        </field>
+    </fieldset>
+
+    <fieldset name="bid_list" sortOrder="20">
+        <settings>
+            <label translate="true">Bid List</label>
+        </settings>
+        <insertListing name="devhongzui_bid_listing">
+            <settings>
+                <loading>true</loading>
+                <autoRender>true</autoRender>
+                <ns>devhongzui_bid_listing</ns>
+            </settings>
+        </insertListing>
+    </fieldset>
+
+    <fieldset name="product_list" sortOrder="30">
+        <settings>
+            <label translate="true">Product List</label>
+        </settings>
+        <insertListing name="devhongzui_product_listing">
+            <settings>
+                <loading>true</loading>
+                <autoRender>true</autoRender>
+                <ns>devhongzui_product_listing</ns>
+            </settings>
+        </insertListing>
+    </fieldset>
+</form>

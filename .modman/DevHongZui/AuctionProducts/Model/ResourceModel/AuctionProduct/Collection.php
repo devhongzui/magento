@@ -23,4 +23,15 @@ class Collection extends AbstractCollection
 
         $this->_init(ProductModel::class, ProductResourceModel::class);
     }
+
+    /**
+     * @param int $auction_id
+     * @return array
+     */
+    public function getProductIds(int $auction_id): array
+    {
+        $this->addFieldToFilter('auction_id', $auction_id);
+
+        return $this->getColumnValues('product_id');
+    }
 }

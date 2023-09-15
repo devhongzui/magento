@@ -44,13 +44,10 @@ class HighestPrice extends Column
     public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items']))
-            foreach ($dataSource['data']['items'] as &$item) {
-                $item[$this->getName() . '_raw'] = $item[$this->getName()];
-
+            foreach ($dataSource['data']['items'] as &$item)
                 $item[$this->getName()] = $this->getHighestPrice(
-                    $item[$this->getName()]
+                    $item['entity_id']
                 );
-            }
 
         return $dataSource;
     }

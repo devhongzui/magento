@@ -38,13 +38,11 @@ class Delete extends Generic
      */
     public function getButtonData(): array
     {
-        $data = [];
-
         $id = $this->request->getParam('id');
 
         if ($id)
             if ($this->auction->haveDelete($id))
-                $data = [
+                return [
                     'label' => __('Delete Auction'),
                     'class' => 'delete',
                     'on_click' => sprintf(
@@ -54,7 +52,7 @@ class Delete extends Generic
                     )
                 ];
 
-        return $data;
+        return [];
     }
 
     /**

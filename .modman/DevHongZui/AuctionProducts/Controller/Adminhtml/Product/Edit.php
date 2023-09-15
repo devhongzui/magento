@@ -54,7 +54,7 @@ class Edit extends Action implements HttpGetActionInterface
 
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Magento_Backend::content_elements');
+        $resultPage->setActiveMenu('DevHongZui_AuctionProducts::auction_product_manage');
         $resultPage->getConfig()->getTitle()->prepend($this->getTitle($id));
         return $resultPage;
     }

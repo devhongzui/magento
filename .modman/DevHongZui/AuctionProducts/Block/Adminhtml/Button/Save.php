@@ -39,15 +39,13 @@ class Save extends Generic
      */
     public function getButtonData(): array
     {
-        $data = [];
-
         $id = $this->request->getParam('id');
 
         if (
             ($id && $this->auction->haveSave($id)) ||
             !$id
         )
-            $data = [
+            return [
                 'label' => __('Save Auction'),
                 'class' => 'save primary',
                 'class_name' => Container::DEFAULT_CONTROL,
@@ -68,6 +66,6 @@ class Save extends Generic
                 ],
             ];
 
-        return $data;
+        return [];
     }
 }

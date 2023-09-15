@@ -39,8 +39,6 @@ class SaveAndContinue extends Generic
      */
     public function getButtonData(): array
     {
-        $data = [];
-
         $id = $this->request->getParam('id');
 
         if (
@@ -48,7 +46,7 @@ class SaveAndContinue extends Generic
             !$id
         )
             if ($this->auction->haveSave($id))
-                $data = [
+                return [
                     'label' => __('Save and Continue Edit'),
                     'class' => 'save',
                     'class_name' => Container::DEFAULT_CONTROL,
@@ -69,6 +67,6 @@ class SaveAndContinue extends Generic
                     ],
                 ];
 
-        return $data;
+        return [];
     }
 }

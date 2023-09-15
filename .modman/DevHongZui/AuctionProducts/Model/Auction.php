@@ -2,7 +2,6 @@
 
 namespace DevHongZui\AuctionProducts\Model;
 
-use Magento\Catalog\Model\Product\Interceptor;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject\IdentityInterface;
@@ -112,17 +111,12 @@ class Auction extends AbstractModel implements IdentityInterface
 
         $product_collection = $this->productCollectionFactory->create();
 
-        $product_collection
-            ->addIdFilter($handle);
+        $product_collection->addIdFilter($handle);
 
-        $data = [];
-
-        /** @var Interceptor $item */
-        foreach ($product_collection as $item) {
-            $data[] = $item->getSku();
-        }
-
-        return implode(', ', $data);
+        return implode(
+            ', ',
+            $product_collection->getColumnValues('sku')
+        );
     }
 
     /**

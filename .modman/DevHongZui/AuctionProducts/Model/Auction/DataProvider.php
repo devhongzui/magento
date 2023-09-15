@@ -52,37 +52,36 @@ class DataProvider extends AbstractDataProvider
     {
         $id = array_first($this->getAllIds());
 
-        if ($id)
-            if ($data_persistor = $this->getDataPersistor())
-                $this->loadedData[$id] = $data_persistor;
-            else {
-                $this->loadedData[$id]['general'] = $this->getSearchResult()->getFirstItem()->getData();
+        if ($data_persistor = $this->getDataPersistor())
+            $this->loadedData[$id] = $data_persistor;
+        else if ($id) {
+            $this->loadedData[$id]['general'] = $this->getSearchResult()->getFirstItem()->getData();
 
-                if (is_string($this->loadedData[$id]['general']['product_ids']))
-                    $this->loadedData[$id]['general']['product_ids'] = $this->getProductSkus(
-                        $this->loadedData[$id]['general']['product_ids']
-                    );
+            if (is_string($this->loadedData[$id]['general']['product_ids']))
+                $this->loadedData[$id]['general']['product_ids'] = $this->getProductSkus(
+                    $this->loadedData[$id]['general']['product_ids']
+                );
 
-                if (is_numeric($this->loadedData[$id]['general']['start_price']))
-                    $this->loadedData[$id]['general']['start_price'] = number_format(
-                        $this->loadedData[$id]['general']['start_price'], 2
-                    );
+            if (is_numeric($this->loadedData[$id]['general']['start_price']))
+                $this->loadedData[$id]['general']['start_price'] = round(
+                    $this->loadedData[$id]['general']['start_price']
+                );
 
-                if (is_numeric($this->loadedData[$id]['general']['step_price']))
-                    $this->loadedData[$id]['general']['step_price'] = number_format(
-                        $this->loadedData[$id]['general']['step_price'], 2
-                    );
+            if (is_numeric($this->loadedData[$id]['general']['step_price']))
+                $this->loadedData[$id]['general']['step_price'] = round(
+                    $this->loadedData[$id]['general']['step_price']
+                );
 
-                if (is_numeric($this->loadedData[$id]['general']['reserve_price']))
-                    $this->loadedData[$id]['general']['reserve_price'] = number_format(
-                        $this->loadedData[$id]['general']['reserve_price'], 2
-                    );
+            if (is_numeric($this->loadedData[$id]['general']['reserve_price']))
+                $this->loadedData[$id]['general']['reserve_price'] = round(
+                    $this->loadedData[$id]['general']['reserve_price']
+                );
 
-                if (is_numeric($this->loadedData[$id]['general']['limit_price']))
-                    $this->loadedData[$id]['general']['limit_price'] = number_format(
-                        $this->loadedData[$id]['general']['limit_price'], 2
-                    );
-            }
+            if (is_numeric($this->loadedData[$id]['general']['limit_price']))
+                $this->loadedData[$id]['general']['limit_price'] = round(
+                    $this->loadedData[$id]['general']['limit_price']
+                );
+        }
 
         return $this->loadedData;
     }

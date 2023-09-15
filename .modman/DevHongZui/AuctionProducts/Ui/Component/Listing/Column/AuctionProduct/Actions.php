@@ -41,7 +41,7 @@ class Actions extends Column
             foreach ($dataSource['data']['items'] as & $item)
                 if (isset($item['entity_id']))
                     $item[$this->getData('name')] = [
-                        'view' => $this->getViewButton($item['entity_id_raw']),
+                        'view' => $this->getViewButton($item['entity_id']),
                     ];
 
         return $dataSource;

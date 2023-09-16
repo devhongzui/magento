@@ -56,7 +56,7 @@ class Save extends Action implements HttpPostActionInterface
                 'Data Saved Successfully.'
             ));
 
-            return $this->getRequest()->getParam('back') == 'edit'
+            return $this->getRequest()->getParam('back') === 'edit'
                 ? $this->_redirect('*/*/edit', ['id' => $auction_model->getId()])
                 : $this->_redirect('*/*/');
         } catch (Exception $exception) {
@@ -89,7 +89,7 @@ class Save extends Action implements HttpPostActionInterface
 
         return [
             'entity_id' => $general['entity_id'] ?? null,
-            'new_product_ids' => $general['product_ids'],
+            'product_ids' => $general['product_ids'],
             'start_price' => $general['start_price'],
             'step_price' => $general['step_price'],
             'reserve_price' => $general['reserve_price'],

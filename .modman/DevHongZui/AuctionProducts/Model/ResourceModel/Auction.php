@@ -61,24 +61,31 @@ class Auction extends AbstractDb
     /**
      * @param AbstractModel $object
      * @return Auction
+     * @throws Exception
      */
     protected function _beforeSave(AbstractModel $object): Auction
     {
-        $product_collection = $this->productCollectionFactory->create();
-
-        $new_product = explode(',', $object->getData('new_product_ids'));
-
-        foreach ($new_product as &$value)
-            $value = trim($value);
-
-        $new_product_ids = $product_collection->addFieldToFilter('sku', $new_product)->getAllIds();
-        $product_ids = implode(',', $new_product_ids);
+        $new_product_ids = $this->getNewProductIds($object->getData('product_ids'));
 
         $object
             ->setData('new_product_ids', $new_product_ids)
-            ->setData('product_ids', $product_ids);
+            ->setData('product_ids', implode(',', $new_product_ids));
 
         return parent::_beforeSave($object);
+    }
+
+    public function getNewProductIds(string $product_skus): array
+    {
+        $new_product_skus = explode(',', $product_skus);
+
+        foreach ($new_product_skus as &$value)
+            $value = trim($value);
+
+        $product_collection = $this->productCollectionFactory->create();
+
+        return $product_collection
+            ->addFieldToFilter('sku', $new_product_skus)
+            ->getAllIds();
     }
 
     /**

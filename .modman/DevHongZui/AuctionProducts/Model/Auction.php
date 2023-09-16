@@ -2,6 +2,7 @@
 
 namespace DevHongZui\AuctionProducts\Model;
 
+use DevHongZui\AuctionProducts\Model\ResourceModel\AuctionProduct\CollectionFactory as AuctionProductCollectionFactory;
 use Exception;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
@@ -34,6 +35,8 @@ class Auction extends AbstractModel implements IdentityInterface
 
     protected ProductCollectionFactory $productCollectionFactory;
 
+    protected AuctionProductCollectionFactory $auctionProductCollectionFactory;
+
     protected TimezoneInterface $timezone;
 
     /**
@@ -41,23 +44,26 @@ class Auction extends AbstractModel implements IdentityInterface
      * @param Registry $registry
      * @param ProductCollectionFactory $productCollectionFactory
      * @param TimezoneInterface $timezone
+     * @param AuctionProductCollectionFactory $auctionProductCollectionFactory
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
      */
     public function __construct(
-        Context                  $context,
-        Registry                 $registry,
-        ProductCollectionFactory $productCollectionFactory,
-        TimezoneInterface        $timezone,
-        AbstractResource         $resource = null,
-        AbstractDb               $resourceCollection = null,
-        array                    $data = [])
+        Context                         $context,
+        Registry                        $registry,
+        ProductCollectionFactory        $productCollectionFactory,
+        TimezoneInterface               $timezone,
+        AuctionProductCollectionFactory $auctionProductCollectionFactory,
+        AbstractResource                $resource = null,
+        AbstractDb                      $resourceCollection = null,
+        array                           $data = [])
     {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
 
         $this->productCollectionFactory = $productCollectionFactory;
         $this->timezone = $timezone;
+        $this->auctionProductCollectionFactory = $auctionProductCollectionFactory;
     }
 
     /**
@@ -91,14 +97,8 @@ class Auction extends AbstractModel implements IdentityInterface
             throw new Exception($message);
 
         $start_price = $this->getData('start_price');
-        $step_price = $this->getData('step_price');
         $reserve_price = $this->getData('reserve_price');
         $limit_price = $this->getData('limit_price');
-
-        if ($start_price < $step_price)
-            throw new Exception(__(
-                'Start Price < Step Price'
-            ));
 
         if ($limit_price < $start_price)
             throw new Exception(__(
@@ -124,6 +124,32 @@ class Auction extends AbstractModel implements IdentityInterface
         if ($stop_at < $start_at)
             throw new Exception(__(
                 'Stop At < Start At'
+            ));
+
+        $product_skus = $this->getData('product_ids');
+        $new_product_skus = explode(',', $product_skus);
+        $new_product_ids = $this->getResource()->getNewProductIds($product_skus);
+
+        if (count($new_product_skus) != count($new_product_ids))
+            throw new Exception(__(
+                'The product in the list does not exist'
+            ));
+
+        $auction_ids = $this->getCollection()
+            ->addFieldToFilter('entity_id', ['neq' => $this->getId()])
+            ->addFieldToFilter('status', ['neq' => self::STATUS_ENDED])
+            ->addFieldToFilter('status', ['neq' => [self::STATUS_DISABLED]])
+            ->addFieldToFilter('stop_at', ['gt' => $this->getCurrentTimeUTC()])
+            ->getAllIds();
+
+        $auction_product_collection = $this->auctionProductCollectionFactory->create();
+        $auction_product_collection
+            ->addFieldToFilter('main_table.product_id', $new_product_ids)
+            ->addFieldToFilter('auction_id', $auction_ids);
+
+        if ($auction_product_collection->getFirstItem()->getData())
+            throw new Exception(__(
+                'The product in the list already exists in 1 Auction that has not yet ended'
             ));
 
         return parent::validateBeforeSave();

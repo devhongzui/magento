@@ -155,7 +155,13 @@
                 </validation>
             </settings>
         </field>
-        <field name="status" sortOrder="90" formElement="checkbox">
+        <field name="status" sortOrder="90" formElement="input">
+            <settings>
+                <elementTmpl>ui/form/element/text</elementTmpl>
+                <label translate="true">Status</label>
+            </settings>
+        </field>
+        <field name="disabled" sortOrder="100" formElement="checkbox">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="prefer" xsi:type="string">toggle</item>
@@ -167,12 +173,14 @@
                 </item>
             </argument>
             <settings>
-                <label translate="true">Status</label>
+                <label translate="true">Enable</label>
             </settings>
         </field>
     </fieldset>
 
-    <fieldset name="bid_list" sortOrder="20">
+    <fieldset name="bid_list"
+              class="DevHongZui\AuctionProducts\Model\AuctionBidder\BidderFieldset"
+              sortOrder="20">
         <settings>
             <label translate="true">Bid List</label>
         </settings>
@@ -185,7 +193,9 @@
         </insertListing>
     </fieldset>
 
-    <fieldset name="product_list" sortOrder="30">
+    <fieldset name="product_list"
+              class="DevHongZui\AuctionProducts\Model\AuctionProduct\ProductFieldset"
+              sortOrder="30">
         <settings>
             <label translate="true">Product List</label>
         </settings>

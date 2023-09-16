@@ -2,6 +2,7 @@
 
 namespace DevHongZui\AuctionProducts\Controller\Adminhtml\Product;
 
+use DevHongZui\AuctionProducts\Model\Auction;
 use DevHongZui\AuctionProducts\Model\AuctionFactory;
 use Exception;
 use Magento\Backend\App\Action;
@@ -55,10 +56,9 @@ class Save extends Action implements HttpPostActionInterface
                 'Data Saved Successfully.'
             ));
 
-            return $this->_redirect(
-                '*/*/edit',
-                ['id' => $auction_model->getId()]
-            );
+            return $this->getRequest()->getParam('back') == 'edit'
+                ? $this->_redirect('*/*/edit', ['id' => $auction_model->getId()])
+                : $this->_redirect('*/*/');
         } catch (Exception $exception) {
             $this->messageManager->addErrorMessage(__(
                 "We can't submit your request, Please try again. (%1)",
@@ -67,10 +67,9 @@ class Save extends Action implements HttpPostActionInterface
 
             $this->dataPersistor->set('auction', $this->getRequest()->getParams());
 
-            return $this->_redirect(
-                '*/*/edit',
-                ['id' => $this->getRequest()->getParam('entity_id')]
-            );
+            $id = $this->getRequest()->getParam('general')['entity_id'] ?? null;
+
+            return $this->_redirect('*/*/edit', ['id' => $id]);
         }
     }
 
@@ -98,7 +97,9 @@ class Save extends Action implements HttpPostActionInterface
             'start_at' => $general['start_at'],
             'stop_at' => $general['stop_at'],
             'days' => $general['days'],
-            'status' => $general['status'],
+            'status' => $general['disabled'] == 1
+                ? Auction::STATUS_DISABLED
+                : Auction::STATUS_NOT_START,
         ];
     }
 }

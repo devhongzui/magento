@@ -81,6 +81,22 @@ class DataProvider extends AbstractDataProvider
                 $this->loadedData[$id]['general']['limit_price'] = round(
                     $this->loadedData[$id]['general']['limit_price']
                 );
+
+            $this->loadedData[$id]['general']['disabled'] = match ((int)$this->loadedData[$id]['general']['status']) {
+                Auction::STATUS_NOT_START,
+                Auction::STATUS_PROCESSING,
+                Auction::STATUS_FINISHED,
+                Auction::STATUS_ENDED => '0',
+
+                default => '1',
+            };
+
+            $this->loadedData[$id]['general']['status'] = $this->auction->getStatusLabel(
+                $this->loadedData[$id]['general']['status']
+            );
+        } else {
+            $this->loadedData[null]['general']['status'] = __('The status will be displayed after saving');
+            $this->loadedData[null]['general']['disabled'] = '0';
         }
 
         return $this->loadedData;

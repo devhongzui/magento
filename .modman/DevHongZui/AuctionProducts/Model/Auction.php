@@ -2,6 +2,7 @@
 
 namespace DevHongZui\AuctionProducts\Model;
 
+use Exception;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject\IdentityInterface;
@@ -9,6 +10,7 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class Auction extends AbstractModel implements IdentityInterface
 {
@@ -32,10 +34,13 @@ class Auction extends AbstractModel implements IdentityInterface
 
     protected ProductCollectionFactory $productCollectionFactory;
 
+    protected TimezoneInterface $timezone;
+
     /**
      * @param Context $context
      * @param Registry $registry
      * @param ProductCollectionFactory $productCollectionFactory
+     * @param TimezoneInterface $timezone
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -44,6 +49,7 @@ class Auction extends AbstractModel implements IdentityInterface
         Context                  $context,
         Registry                 $registry,
         ProductCollectionFactory $productCollectionFactory,
+        TimezoneInterface        $timezone,
         AbstractResource         $resource = null,
         AbstractDb               $resourceCollection = null,
         array                    $data = [])
@@ -51,6 +57,7 @@ class Auction extends AbstractModel implements IdentityInterface
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
 
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->timezone = $timezone;
     }
 
     /**
@@ -69,6 +76,61 @@ class Auction extends AbstractModel implements IdentityInterface
     public function getIdentities(): array
     {
         return [$this->_cacheTag . '_' . $this->getId()];
+    }
+
+    /**
+     * @return Auction
+     * @throws Exception
+     * @throws Exception
+     */
+    public function validateBeforeSave(): Auction
+    {
+        $this->haveSave();
+
+        $start_price = $this->getData('start_price');
+        $step_price = $this->getData('step_price');
+        $reserve_price = $this->getData('reserve_price');
+        $limit_price = $this->getData('limit_price');
+
+        if ($start_price < $step_price)
+            throw new Exception(__(
+                'Start Price < Step Price'
+            ));
+
+        if ($limit_price < $start_price)
+            throw new Exception(__(
+                'Limit Price < Start Price'
+            ));
+
+        if ($reserve_price < $start_price)
+            throw new Exception(__(
+                'Reserve Price < Start Price'
+            ));
+
+        if ($reserve_price < $limit_price)
+            throw new Exception(__(
+                'Reserve Price < Limit Price'
+            ));
+
+        $current_time_raw = ($this->timezone->date(useTimezone: false)->format('Y-m-d H:i:s'));
+        $start_at_raw = $this->getData('start_at');
+        $stop_at_raw = $this->getData('stop_at');
+
+        $current_time = strtotime($current_time_raw);
+        $start_at = strtotime($start_at_raw);
+        $stop_at = strtotime($stop_at_raw);
+
+        if ($start_at < $current_time)
+            throw new Exception(__(
+                'Start At < Current Time'
+            ));
+
+        if ($stop_at < $start_at)
+            throw new Exception(__(
+                'Stop At < Start At'
+            ));
+
+        return parent::validateBeforeSave();
     }
 
     /**

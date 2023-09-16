@@ -40,10 +40,9 @@ class Delete extends Generic
     {
         $id = $this->request->getParam('id');
 
-        if ($id)
-            if ($this->auction->haveDelete($id))
+        if ($id && is_bool($this->auction->haveDelete($id)))
                 return [
-                    'label' => __('Delete Auction'),
+                    'label' => __('Delete'),
                     'class' => 'delete',
                     'on_click' => sprintf(
                         "deleteConfirm('%s', '%s')",

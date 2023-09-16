@@ -85,7 +85,10 @@ class Auction extends AbstractModel implements IdentityInterface
      */
     public function validateBeforeSave(): Auction
     {
-        $this->haveSave();
+        $message = $this->haveSave();
+
+        if (is_string($message))
+            throw new Exception($message);
 
         $start_price = $this->getData('start_price');
         $step_price = $this->getData('step_price');
@@ -112,18 +115,11 @@ class Auction extends AbstractModel implements IdentityInterface
                 'Reserve Price < Limit Price'
             ));
 
-        $current_time_raw = ($this->timezone->date(useTimezone: false)->format('Y-m-d H:i:s'));
         $start_at_raw = $this->getData('start_at');
         $stop_at_raw = $this->getData('stop_at');
 
-        $current_time = strtotime($current_time_raw);
         $start_at = strtotime($start_at_raw);
         $stop_at = strtotime($stop_at_raw);
-
-        if ($start_at < $current_time)
-            throw new Exception(__(
-                'Start At < Current Time'
-            ));
 
         if ($stop_at < $start_at)
             throw new Exception(__(
@@ -131,6 +127,14 @@ class Auction extends AbstractModel implements IdentityInterface
             ));
 
         return parent::validateBeforeSave();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCurrentTimeUTC(): string
+    {
+        return $this->timezone->date(useTimezone: false)->format('Y-m-d H:i:s');
     }
 
     /**
@@ -183,24 +187,53 @@ class Auction extends AbstractModel implements IdentityInterface
 
     /**
      * @param int|null $auction_id
-     * @return bool
+     * @return bool|string
      */
-    public function haveDelete(int $auction_id = null): bool
+    public function haveDelete(int $auction_id = null): bool|string
     {
-        if (is_null($auction_id))
-            $auction_id = $this->getId();
+        if (is_null($auction_id)) {
+            $stop_at_raw = $this->getData('stop_at');
+            $status = $this->getData('status');
+        } else {
+            $auction = $this->load($auction_id);
+            $stop_at_raw = $auction->getData('stop_at');
+            $status = $auction->getData('status');
+        }
+
+        $current_time_raw = $this->getCurrentTimeUTC();
+        $current_time = strtotime($current_time_raw);
+        $stop_at = strtotime($stop_at_raw);
+
+        if ($status != self::STATUS_ENDED)
+            return __('Auctions with a status of Ended can only be deleted');
+
+        if ($current_time < $stop_at)
+            return __('Auctions can only be deleted when the timer expires');
 
         return true;
     }
 
     /**
      * @param int|null $auction_id
-     * @return bool
+     * @return bool|string
      */
-    public function haveSave(int $auction_id = null): bool
+    public function haveSave(int $auction_id = null): bool|string
     {
-        if (is_null($auction_id))
-            $auction_id = $this->getId();
+        if (is_null($auction_id)) {
+            $start_at_raw = $this->getData('start_at');
+        } else {
+            $auction = $this->load($auction_id);
+            $start_at_raw = $auction->getData('start_at');
+        }
+
+        if ($start_at_raw) {
+            $current_time_raw = $this->getCurrentTimeUTC();
+            $current_time = strtotime($current_time_raw);
+            $start_at = strtotime($start_at_raw);
+
+            if ($start_at < $current_time)
+                return __('Auctions can only be edited when they have not yet started');
+        }
 
         return true;
     }

@@ -42,7 +42,7 @@ class SaveAndContinue extends Generic
         $id = $this->request->getParam('id');
 
         if (
-            ($id && $this->auction->haveSave($id)) ||
+            ($id && is_bool($this->auction->haveSave($id))) ||
             !$id
         )
             if ($this->auction->haveSave($id))

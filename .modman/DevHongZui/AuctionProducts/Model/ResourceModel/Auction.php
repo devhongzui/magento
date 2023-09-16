@@ -2,6 +2,7 @@
 
 namespace DevHongZui\AuctionProducts\Model\ResourceModel;
 
+use DevHongZui\AuctionProducts\Model\AuctionFactory as AuctionModel;
 use DevHongZui\AuctionProducts\Model\AuctionProductFactory;
 use DevHongZui\AuctionProducts\Model\ResourceModel\AuctionProduct\CollectionFactory as AuctionProductCollectionFactory;
 use Exception;
@@ -22,11 +23,14 @@ class Auction extends AbstractDb
 
     protected AuctionProductCollectionFactory $auctionProductCollectionFactory;
 
+    protected AuctionModel $auctionModel;
+
     /**
      * @param Context $context
      * @param ProductCollectionFactory $productCollectionFactory
      * @param AuctionProductFactory $auctionProductFactory
      * @param AuctionProductCollectionFactory $auctionProductCollectionFactory
+     * @param AuctionModel $auctionModel
      * @param null $connectionName
      */
     public function __construct(
@@ -34,6 +38,7 @@ class Auction extends AbstractDb
         ProductCollectionFactory        $productCollectionFactory,
         AuctionProductFactory           $auctionProductFactory,
         AuctionProductCollectionFactory $auctionProductCollectionFactory,
+        AuctionModel                    $auctionModel,
                                         $connectionName = null
     )
     {
@@ -42,6 +47,7 @@ class Auction extends AbstractDb
         $this->productCollectionFactory = $productCollectionFactory;
         $this->auctionProductFactory = $auctionProductFactory;
         $this->auctionProductCollectionFactory = $auctionProductCollectionFactory;
+        $this->auctionModel = $auctionModel;
     }
 
     /**
@@ -105,6 +111,23 @@ class Auction extends AbstractDb
 
 
         return parent::_afterSave($object);
+    }
+
+    /**
+     * @param AbstractModel $object
+     * @return Auction
+     * @throws Exception
+     */
+    protected function _beforeDelete(AbstractModel $object): Auction
+    {
+        $auction_model = $this->auctionModel->create();
+
+        $message = $auction_model->haveDelete($object->getId());
+
+        if (is_string($message))
+            throw new Exception($message);
+
+        return parent::_beforeDelete($object);
     }
 
     /**

@@ -42,11 +42,11 @@ class Save extends Generic
         $id = $this->request->getParam('id');
 
         if (
-            ($id && $this->auction->haveSave($id)) ||
+            ($id && is_bool($this->auction->haveSave($id))) ||
             !$id
         )
             return [
-                'label' => __('Save Auction'),
+                'label' => __('Save'),
                 'class' => 'save primary',
                 'class_name' => Container::DEFAULT_CONTROL,
                 'data_attribute' => [

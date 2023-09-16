@@ -5,6 +5,7 @@ namespace DevHongZui\AuctionProducts\Model\Auction;
 use DevHongZui\AuctionProducts\Model\Auction;
 use DevHongZui\AuctionProducts\Model\ResourceModel\Auction\CollectionFactory as AuctionCollectionFactory;
 use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class DataProvider extends AbstractDataProvider
@@ -15,6 +16,8 @@ class DataProvider extends AbstractDataProvider
 
     protected Auction $auction;
 
+    protected RequestInterface $request;
+
     /**
      * @param string $name
      * @param string $primaryFieldName
@@ -22,6 +25,7 @@ class DataProvider extends AbstractDataProvider
      * @param AuctionCollectionFactory $auctionCollectionFactory
      * @param DataPersistorInterface $dataPersistor
      * @param Auction $auction
+     * @param RequestInterface $request
      * @param array $meta
      * @param array $data
      */
@@ -32,6 +36,7 @@ class DataProvider extends AbstractDataProvider
         AuctionCollectionFactory $auctionCollectionFactory,
         DataPersistorInterface $dataPersistor,
         Auction $auction,
+        RequestInterface $request,
         array $meta = [],
         array $data = []
     )
@@ -42,7 +47,34 @@ class DataProvider extends AbstractDataProvider
         $this->collection = $auctionCollectionFactory->create();
         $this->dataPersistor = $dataPersistor;
         $this->auction = $auction;
+        $this->request = $request;
         $this->loadedData = [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getMeta(): array
+    {
+        $meta = parent::getMeta();
+
+        if (
+            ($id = $this->request->getParam('id')) &&
+            is_string($this->auction->haveSave($id))
+        ) {
+            $meta['general']['children']['product_ids']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['start_price']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['step_price']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['reserve_price']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['limit_price']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['start_at']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['stop_at']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['days']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['status']['arguments']['data']['config']['disabled'] = true;
+            $meta['general']['children']['disabled']['arguments']['data']['config']['disabled'] = true;
+        }
+
+        return $meta;
     }
 
     /**

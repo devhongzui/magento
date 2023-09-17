@@ -57,7 +57,8 @@ class Auction extends AbstractModel implements IdentityInterface
         AuctionProductCollectionFactory $auctionProductCollectionFactory,
         AbstractResource                $resource = null,
         AbstractDb                      $resourceCollection = null,
-        array                           $data = [])
+        array                           $data = []
+    )
     {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
 
@@ -219,19 +220,14 @@ class Auction extends AbstractModel implements IdentityInterface
     {
         if (is_null($auction_id)) {
             $stop_at_raw = $this->getData('stop_at');
-            $status = $this->getData('status');
         } else {
             $auction = $this->load($auction_id);
             $stop_at_raw = $auction->getData('stop_at');
-            $status = $auction->getData('status');
         }
 
         $current_time_raw = $this->getCurrentTimeUTC();
         $current_time = strtotime($current_time_raw);
         $stop_at = strtotime($stop_at_raw);
-
-        if ($status != self::STATUS_ENDED)
-            return __('Auctions with a status of Ended can only be deleted');
 
         if ($current_time < $stop_at)
             return __('Auctions can only be deleted when the timer expires');

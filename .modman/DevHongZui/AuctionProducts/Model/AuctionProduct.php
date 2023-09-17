@@ -4,6 +4,7 @@ namespace DevHongZui\AuctionProducts\Model;
 
 use DevHongZui\AuctionProducts\Model\ResourceModel\AuctionBidder\CollectionFactory as AuctionBidderCollectionFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
@@ -73,6 +74,32 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
     {
         if (is_null($auction_product_id)) {
             $auction_id = $this->getData('auction_id');
+        } else {
+            $auction_product_model = $this->load($auction_product_id);
+            $auction_id = $auction_product_model->getData('auction_id');
+        }
+
+        $auction_bid = $this->getHighestPriceEntity($auction_product_id);
+
+        if ($bid_price = $auction_bid->getData('bid_price'))
+            return $bid_price;
+        else {
+            $auction_model = $this->auctionFactory->create();
+
+            $auction_model->load($auction_id);
+
+            return $auction_model->getData('start_price');
+        }
+    }
+
+    /**
+     * @param int|null $auction_product_id
+     * @return DataObject
+     */
+    public function getHighestPriceEntity(int $auction_product_id = null): DataObject
+    {
+        if (is_null($auction_product_id)) {
+            $auction_id = $this->getData('auction_id');
             $product_id = $this->getData('product_id');
         } else {
             $auction_product_model = $this->load($auction_product_id);
@@ -87,16 +114,6 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
             ->addFieldToFilter('product_id', $product_id)
             ->setOrder('created_at');
 
-        $auction_bid = $auction_bidder_collection->getFirstItem();
-
-        if ($bid_price = $auction_bid->getData('bid_price'))
-            return $bid_price;
-        else {
-            $auction_model = $this->auctionFactory->create();
-
-            $auction_model->load($auction_id);
-
-            return $auction_model->getData('start_price');
-        }
+        return $auction_bidder_collection->getFirstItem();
     }
 }

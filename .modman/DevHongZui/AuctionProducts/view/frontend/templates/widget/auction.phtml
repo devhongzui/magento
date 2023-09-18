@@ -29,7 +29,7 @@ $count = $products->getSize();
                 <img src="<?= $escaper->escapeUrl($title_image) ?>" alt="<?= $escaper->escapeHtml($title) ?>"/>
             </h3>
             <?php
-            $view_all_button_link = $block->getUrl('auction/product/list');
+            $view_all_button_link = $block->getUrl('auction/product/listing');
             $view_all_button_label = $block->getViewAllButton();
             ?>
             <div class="widget-auctions-buttons">

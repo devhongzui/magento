@@ -108,12 +108,12 @@ class Auction extends AbstractDb
 
         if ($insert) {
             $this->insertProductListInAuctionProductTable($insert, $auction_id, $auction_status);
-//            $this->changeEAVProduct($insert, $auction_id);
+            $this->changeEAVProduct($insert, $auction_id);
         }
 
         if ($delete) {
             $this->deleteProductListInAuctionProductTable($delete, $auction_id);
-//            $this->changeEAVProduct($delete);
+            $this->changeEAVProduct($delete);
         }
 
 
@@ -188,7 +188,7 @@ class Auction extends AbstractDb
     {
         $product_collection = $this->productCollectionFactory->create();
 
-        $product_collection->addIdFilter('id', $product_ids);
+        $product_collection->addIdFilter($product_ids);
 
         foreach ($product_collection as $item)
             $item->setData('auction_id', $auction_id)->save();

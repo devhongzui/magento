@@ -139,19 +139,20 @@ class Auction extends AbstractModel implements IdentityInterface
         $auction_ids = $this->getCollection()
             ->addFieldToFilter('entity_id', ['neq' => $this->getId()])
             ->addFieldToFilter('status', ['neq' => self::STATUS_ENDED])
-            ->addFieldToFilter('status', ['neq' => [self::STATUS_DISABLED]])
             ->addFieldToFilter('stop_at', ['gt' => $this->getCurrentTimeUTC()])
             ->getAllIds();
 
-        $auction_product_collection = $this->auctionProductCollectionFactory->create();
-        $auction_product_collection
-            ->addFieldToFilter('main_table.product_id', $new_product_ids)
-            ->addFieldToFilter('auction_id', $auction_ids);
+        if ($auction_ids) {
+            $auction_product_collection = $this->auctionProductCollectionFactory->create();
+            $auction_product_collection
+                ->addFieldToFilter('main_table.product_id', $new_product_ids)
+                ->addFieldToFilter('auction_id', $auction_ids);
 
-        if ($auction_product_collection->getFirstItem()->getData())
-            throw new Exception(__(
-                'The product in the list already exists in 1 Auction that has not yet ended'
-            ));
+            if ($auction_product_collection->getFirstItem()->getData())
+                throw new Exception(__(
+                    'The product in the list already exists in 1 Auction that has not yet ended'
+                ));
+        }
 
         return parent::validateBeforeSave();
     }

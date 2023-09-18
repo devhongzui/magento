@@ -44,6 +44,7 @@ $count = $products->getSize();
         $current_url = $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]);
 
         $form_key = $block->getFormKey();
+
         $url_submit = $block->isLoggedIn()
             ? $block->getUrl('auction/product/bid')
             : $block->getUrl($block->getLoginUrl(), ['referer' => $current_url]);
@@ -54,18 +55,21 @@ $count = $products->getSize();
             $product_id = $product->getData('product_id');
             $auction_id = $product->getData('auction_id');
             $status = $product->getData('status');
-            $start_at_raw = $product->getData('start_at');
-            $stop_at_raw = $product->getData('stop_at');
+            // Time
+            $start_at_raw = $block->switchTimeZone($product->getData('start_at'));
+            $stop_at_raw = $block->switchTimeZone($product->getData('stop_at'));
             $current_time_raw = $block->getCurrentTime();
-            $step_price_raw = $block->switchTimeZone($product->getData('step_price'));
-            $highest_price_raw = $block->switchTimeZone($block->getHighestPrice($auction_product_id));
 
             $start_at = strtotime($start_at_raw);
             $stop_at = strtotime($stop_at_raw);
             $current_time = strtotime($current_time_raw);
+            // Price
+            $step_price_raw = $product->getData('step_price');
+            $highest_price_raw = $block->getHighestPrice($auction_product_id);
+
             $step_price = $block->formatPrice($step_price_raw);
             $highest_price = $block->formatPrice($highest_price_raw);
-
+            // URL
             $auction_url = $block->getUrl('auction/product/detail', ['id' => $auction_product_id]);
 
             try {
@@ -81,12 +85,12 @@ $count = $products->getSize();
             $is_ended = false;
             $is_processing = false;
 
-            if ($start_at < $current_time) {
+            if ($start_at > $current_time) {
                 $is_coming_soon = true;
                 $price_label = __('Expected Price');
                 $status = __('Coming Soon');
             } else if (
-                $stop_at > $current_time ||
+                $stop_at < $current_time ||
                 $status == DevHongZui\AuctionProducts\Model\Auction::STATUS_ENDED
             ) {
                 $is_ended = true;

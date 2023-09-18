@@ -134,7 +134,24 @@ class Auction extends AbstractDb
         if (is_string($message))
             throw new Exception($message);
 
+        $auction_product_collection = $this->auctionProductCollectionFactory->create();
+
+        $delete = $auction_product_collection->getProductIds($object->getId());
+
+        $object->setData('delete', $delete);
+
         return parent::_beforeDelete($object);
+    }
+
+    /**
+     * @param AbstractModel $object
+     * @return Auction
+     */
+    protected function _afterDelete(AbstractModel $object): Auction
+    {
+        $this->changeEAVProduct($object->getData('delete'));
+
+        return parent::_afterDelete($object);
     }
 
     /**
@@ -181,16 +198,17 @@ class Auction extends AbstractDb
 
     /**
      * @param array $product_ids
-     * @param int|null $auction_id
+     * @param int $auction_id
      * @return void
      */
-    protected function changeEAVProduct(array $product_ids, int $auction_id = null): void
+    protected function changeEAVProduct(array $product_ids, int $auction_id = 0): void
     {
         $product_collection = $this->productCollectionFactory->create();
 
         $product_collection->addIdFilter($product_ids);
 
-        foreach ($product_collection as $item)
-            $item->setData('auction_id', $auction_id)->save();
+        $product_collection
+            ->setDataToAll('auction_id', $auction_id)
+            ->save();
     }
 }

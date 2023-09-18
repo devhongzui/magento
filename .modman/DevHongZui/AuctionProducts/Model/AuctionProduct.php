@@ -3,9 +3,11 @@
 namespace DevHongZui\AuctionProducts\Model;
 
 use DevHongZui\AuctionProducts\Model\ResourceModel\AuctionBidder\CollectionFactory as AuctionBidderCollectionFactory;
+use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
@@ -23,11 +25,14 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
 
     protected AuctionFactory $auctionFactory;
 
+    protected ProductRepository $productRepository;
+
     /**
      * @param Context $context
      * @param Registry $registry
      * @param AuctionBidderCollectionFactory $auctionBidderCollectionFactory
      * @param AuctionFactory $auctionFactory
+     * @param ProductRepository $productRepository
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -37,6 +42,7 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
         Registry                       $registry,
         AuctionBidderCollectionFactory $auctionBidderCollectionFactory,
         AuctionFactory                 $auctionFactory,
+        ProductRepository              $productRepository,
         AbstractResource               $resource = null,
         AbstractDb                     $resourceCollection = null,
         array                          $data = []
@@ -46,16 +52,7 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
 
         $this->auctionBidderCollectionFactory = $auctionBidderCollectionFactory;
         $this->auctionFactory = $auctionFactory;
-    }
-
-    /**
-     * @return void
-     */
-    protected function _construct(): void
-    {
-        parent::_construct();
-
-        $this->_init(ResourceModel\AuctionProduct::class);
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -115,5 +112,41 @@ class AuctionProduct extends AbstractModel implements IdentityInterface
             ->setOrder('created_at');
 
         return $auction_bidder_collection->getFirstItem();
+    }
+
+    /**
+     * @param int $product_id
+     * @return float
+     * @throws NoSuchEntityException
+     */
+    public function getHighestPriceByProductId(int $product_id): float
+    {
+        if ($this->hasData('entity_id')) {
+            $auction_product_id = $this->getId();
+        } else {
+            $auction_id = $this->productRepository
+                ->getById($product_id)
+                ->getData('auction_id');
+
+            $auction_product_id = $this->getCollection()
+                ->addFieldToFilter('auction_id', $auction_id)
+                ->addFieldToFilter('product_id', $product_id)
+                ->addFieldToSelect('entity_id')
+                ->getFirstItem()
+                ->getData('entity_id');
+        }
+
+        return $this->getHighestPrice($auction_product_id);
+
+    }
+
+    /**
+     * @return void
+     */
+    protected function _construct(): void
+    {
+        parent::_construct();
+
+        $this->_init(ResourceModel\AuctionProduct::class);
     }
 }

@@ -13,15 +13,11 @@ use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRepository;
-use Magento\Customer\Model\SessionFactory;
-use Magento\Customer\Model\Url;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Pricing\Helper\Data as PricingHelperData;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Widget\Block\BlockInterface;
 
 class Auction extends AbstractProduct implements BlockInterface, IdentityInterface
@@ -34,26 +30,14 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
 
     protected AuctionProduct $auctionProduct;
 
-    protected SessionFactory $sessionFactory;
-
-    protected TimezoneInterface $timezone;
-
-    protected Url $url;
-
     protected ProductRepository $productRepository;
-
-    protected PricingHelperData $pricingHelperData;
 
     /**
      * @param Context $context
      * @param FormKey $formKey
      * @param AuctionProductCollectionFactory $auctionProductCollectionFactory
      * @param AuctionProduct $auctionProduct
-     * @param SessionFactory $sessionFactory
-     * @param TimezoneInterface $timezone
-     * @param Url $url
      * @param ProductRepository $productRepository
-     * @param PricingHelperData $pricingHelperData
      * @param array $data
      */
     public function __construct(
@@ -61,11 +45,7 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
         FormKey                         $formKey,
         AuctionProductCollectionFactory $auctionProductCollectionFactory,
         AuctionProduct                  $auctionProduct,
-        SessionFactory                  $sessionFactory,
-        TimezoneInterface               $timezone,
-        Url                             $url,
         ProductRepository               $productRepository,
-        PricingHelperData               $pricingHelperData,
         array                           $data = []
     )
     {
@@ -74,11 +54,7 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
         $this->formKey = $formKey;
         $this->auctionProductCollectionFactory = $auctionProductCollectionFactory;
         $this->auctionProduct = $auctionProduct;
-        $this->sessionFactory = $sessionFactory;
-        $this->timezone = $timezone;
-        $this->url = $url;
         $this->productRepository = $productRepository;
-        $this->pricingHelperData = $pricingHelperData;
     }
 
     /**
@@ -91,16 +67,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
         } catch (LocalizedException) {
             return null;
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLoggedIn(): bool
-    {
-        $session = $this->sessionFactory->create();
-
-        return $session->isLoggedIn();
     }
 
     /**
@@ -122,43 +88,9 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
     /**
      * @return string
      */
-    public function getLoginUrl(): string
-    {
-        return $this->url->getLoginUrl();
-    }
-
-    /**
-     * @return string
-     */
     public function getViewAllButton(): string
     {
         return $this->getData('view_all_button') ?? __('View All');
-    }
-
-    /**
-     * @param $price
-     * @return string
-     */
-    public function formatPrice($price): string
-    {
-        return $this->pricingHelperData->currency($price, includeContainer: false);
-    }
-
-    /**
-     * @param string $time
-     * @return string
-     */
-    public function switchTimeZone(string $time): string
-    {
-        return $this->timezone->date($time)->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrentTime(): string
-    {
-        return $this->timezone->date()->format('Y-m-d H:i:s');
     }
 
     /**
@@ -200,15 +132,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
     protected function getHighestPriceEntity(int $auction_product_id): DataObject
     {
         return $this->auctionProduct->getHighestPriceEntity($auction_product_id);
-    }
-
-    /**
-     * @param int $auction_product_id
-     * @return float
-     */
-    public function getHighestPrice(int $auction_product_id): float
-    {
-        return $this->auctionProduct->getHighestPrice($auction_product_id);
     }
 
     /**

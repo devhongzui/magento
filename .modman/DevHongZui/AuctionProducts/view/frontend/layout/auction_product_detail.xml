@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="catalog_product_view"/>
+    <body>
+        <referenceBlock name="product.info" template="DevHongZui_AuctionProducts::product/detail.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">
+                    DevHongZui\AuctionProducts\ViewModel\AuctionProducts
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="product.info.additional.buynow" remove="true"/>
+        <referenceBlock name="product.actions" remove="true"/>
+        <referenceBlock name="product.actions.info" remove="true"/>
+    </body>
+</page>

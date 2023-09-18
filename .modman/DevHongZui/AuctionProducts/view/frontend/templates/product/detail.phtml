@@ -1,0 +1,175 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var Interceptor $block
+ * @var Escaper $escaper
+ * @var Data $helper
+ */
+
+use DevHongZui\AuctionProducts\Helper\Data;
+use Magento\Catalog\Block\Product\View\Interceptor;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\NoSuchEntityException;
+
+$product = $block->getProduct();
+$product_id = $product->getId();
+$auction_id = $product->getData('auction_id');
+?>
+
+<?php if ($auction_id) : ?>
+    <?php
+    $helper = $this->helper(Data::class);
+
+    $auction = $helper->getAuction($auction_id);
+
+    $current_url = $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]);
+
+    $url_submit = $helper->isLoggedIn()
+        ? $block->getUrl('auction/product/bid')
+        : $block->getUrl($helper->getLoginUrl(), ['referer' => $current_url]);
+
+    $status = $auction->getData('status');
+    // Time
+    $start_at_raw = $helper->switchTimeZone($auction->getData('start_at'));
+    $stop_at_raw = $helper->switchTimeZone($auction->getData('stop_at'));
+    $current_time_raw = $helper->getCurrentTime();
+
+    $start_at = strtotime($start_at_raw);
+    $stop_at = strtotime($stop_at_raw);
+    $current_time = strtotime($current_time_raw);
+    // Price
+    $step_price_raw = $auction->getData('step_price');
+    try {
+        $highest_price_raw = $helper->getHighestPriceByProductId($product_id);
+    } catch (NoSuchEntityException $e) {
+        $highest_price_raw = 0;
+    }
+
+    $step_price = $helper->formatPrice($step_price_raw);
+    $highest_price = $helper->formatPrice($highest_price_raw);
+
+    $is_coming_soon = false;
+    $is_ended = false;
+    $is_processing = false;
+
+    if ($start_at > $current_time) {
+        $is_coming_soon = true;
+        $price_label = __('Expected Price');
+        $status_label = __('Coming Soon');
+    } else if (
+        $stop_at < $current_time ||
+        $status == DevHongZui\AuctionProducts\Model\Auction::STATUS_ENDED
+    ) {
+        $is_ended = true;
+        $price_label = __('Hammer Price');
+        $status_label = __('Ended');
+    } else {
+        $is_processing = true;
+        $price_label = __('Current Max Price');
+        $status_label = __('Processing');
+    }
+
+    $auction_product_html_element_id = "auction_product_{$auction_id}_$product_id";
+    $auction_label_html_element_id = "auction_label_{$auction_id}_$product_id";
+    $auction_countdown_html_element_id = "auction_countdown_{$auction_id}_$product_id";
+    $auction_input_html_element_id = "auction_countdown_{$auction_id}_$product_id";
+    ?>
+    <div id="auction_product_wraper">
+        <div id="auction_product">
+            <div id="<?= $auction_product_html_element_id; ?>"
+                 class="auction-item auction-item-custom __details"
+                 data-expired="false">
+                <div class="auction-product-content">
+                    <div class="auction-product-heading">
+                        <div id="<?= $escaper->escapeHtml($auction_label_html_element_id) ?>"
+                             class="auction-label-status">
+                            <span><?= $escaper->escapeHtml($status_label) ?></span>
+                        </div>
+                        <?php if ($is_processing): ?>
+                            <div id="<?= $escaper->escapeHtml($auction_countdown_html_element_id) ?>"
+                                 class="auction-product-countdown">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div>
+                        <span class="price-label"><?= __('Step Price') ?></span>
+                        <span class="price-number"><?= $escaper->escapeHtml($step_price) ?></span>
+                    </div>
+
+                    <div>
+                        <span class="price-label"><?= $escaper->escapeHtml($price_label) ?></span>
+                        <span class="price-number"><?= $escaper->escapeHtml($highest_price) ?></span>
+                    </div>
+
+                    <?php if ($is_processing): ?>
+                        <form class="form" action="<?= $escaper->escapeUrl($url_submit) ?>" method="post">
+                            <fieldset class="fieldset price-auction-input">
+                                <div class="field required">
+                                    <div class="control">
+                                        <label for="<?= $escaper->escapeHtml($auction_input_html_element_id) ?>">
+                                        </label>
+                                        <input type="text" name="bid_price" class="input-text"
+                                               id="<?= $escaper->escapeHtml($auction_input_html_element_id) ?>"
+                                               placeholder="<?= __('Input Expected Price') ?>"
+                                               data-validate="{required:true, bid-validate:true}">
+                                        <?= $block->getBlockHtml('formkey') ?>
+                                        <input type="hidden" name="auction_id"
+                                               value="<?= $escaper->escapeHtmlAttr($auction_id); ?>"/>
+                                        <input type="hidden" name="product_id"
+                                               value="<?= $escaper->escapeHtmlAttr($product_id); ?>"/>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="actions-toolbar">
+                                <div class="primary auction-product-actions">
+                                    <button disabled type="submit"
+                                            class="action submit primary play-bid"
+                                            title="<?= __('Play Bid') ?>">
+                                        <span><?= __('Play Bid') ?></span>
+                                    </button>
+                                    <button disabled type="button"
+                                            class="action submit primary fast-bid fast_bid"
+                                            title="<?= __('Fast Bid') ?>">
+                                        <span><?= __('Fast Bid') ?></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+
+                    <?php if ($is_ended): ?>
+                        <div class="auction-customer-info">
+                            <div class="customer-name info-item">
+                                <span class="info-label"><?= __('Buyer') ?></span>
+                                <span class="info-detail"><?php ?></span>
+                            </div>
+                            <div class="customer-phone info-item">
+                                <span class="info-label"><?= __('Phone Number') ?></span>
+                                <span class="info-detail"><?php ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-auction">
+        <div class="modal-body-content">
+            <p class="au_message"></p>
+        </div>
+    </div>
+    <script type="text/x-magento-init">
+        {
+        }
+    </script>
+    <script type="text/x-magento-init">
+        {
+        }
+    </script>
+<?php endif; ?>

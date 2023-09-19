@@ -76,7 +76,7 @@ $count = $products->getSize();
             $auction_url = $block->getUrl('auction/product/detail', ['id' => $product_id]);
 
             try {
-                $product_entity = $block->getProductById($product_id);
+                $product_entity = $helper->getProductById($product_id);
                 $product_image = $block->getImage($product_entity, 'product_base_image')->toHtml();
                 $product_name = $product_entity->getName();
             } catch (NoSuchEntityException $e) {

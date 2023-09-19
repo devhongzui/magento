@@ -30,8 +30,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
 
     protected AuctionProduct $auctionProduct;
 
-    protected ProductRepository $productRepository;
-
     /**
      * @param Context $context
      * @param FormKey $formKey
@@ -45,7 +43,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
         FormKey                         $formKey,
         AuctionProductCollectionFactory $auctionProductCollectionFactory,
         AuctionProduct                  $auctionProduct,
-        ProductRepository               $productRepository,
         array                           $data = []
     )
     {
@@ -54,7 +51,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
         $this->formKey = $formKey;
         $this->auctionProductCollectionFactory = $auctionProductCollectionFactory;
         $this->auctionProduct = $auctionProduct;
-        $this->productRepository = $productRepository;
     }
 
     /**
@@ -91,16 +87,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
     public function getViewAllButton(): string
     {
         return $this->getData('view_all_button') ?? __('View All');
-    }
-
-    /**
-     * @param int $product_id
-     * @return ProductInterface
-     * @throws NoSuchEntityException
-     */
-    public function getProductById(int $product_id): ProductInterface
-    {
-        return $this->productRepository->getById($product_id);
     }
 
     /**

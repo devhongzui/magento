@@ -1,0 +1,114 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block WinningProducts
+ * @var Escaper $escaper
+ * @var Data $helper
+ */
+
+use DevHongZui\AuctionProducts\Block\Customer\WinningProducts;
+use DevHongZui\AuctionProducts\Helper\Data;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\NoSuchEntityException;
+
+?>
+<div class="block">
+    <?php
+    $items = $block->getList();
+    $count = count($items);
+    ?>
+    <div class="block-title">
+        <strong><?= $escaper->escapeHtml(__('Winning Products')) ?></strong>
+    </div>
+    <div class="block-content">
+        <?= $block->getChildHtml() ?>
+        <?php if ($count < 1) : ?>
+            <div class="message info empty">
+                <span><?= $escaper->escapeHtml(__('You have placed no products.')) ?></span>
+            </div>
+        <?php else : ?>
+            <div class="table-wrapper">
+                <table class="data table table-order-items recent">
+                    <caption class="table-caption"><?= $escaper->escapeHtml(__('Winning Products')) ?></caption>
+                    <thead>
+                    <tr>
+                        <th scope="col" class="col product">
+                            <?= $escaper->escapeHtml(__('Product')) ?>
+                        </th>
+                        <th scope="col" class="col win-price">
+                            <?= $escaper->escapeHtml(__('Win Price')) ?>
+                        </th>
+                        <th scope="col" class="col product-price">
+                            <?= $escaper->escapeHtml(__('Product Price')) ?>
+                        </th>
+                        <th scope="col" class="col expiry-date">
+                            <?= $escaper->escapeHtml(__('Expiry Date')) ?>
+                        </th>
+                        <th scope="col" class="col action">
+                            <?= $escaper->escapeHtml(__('Action')) ?>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $helper = $this->helper(Data::class);
+                    ?>
+                    <?php foreach ($items as $item) : ?>
+                        <?php
+                        $product_id = $item->getData('product_id');
+                        try {
+                            $product = $helper->getProductById($product_id);
+                            $product_name = $product->getName();
+                            $product_url = $product->getProductUrl();
+                            $product_price = $helper->formatPrice($product->getPrice());
+                        } catch (NoSuchEntityException $e) {
+                            $product_name = null;
+                            $product_url = null;
+                            $product_price = $helper->formatPrice(0);
+                        }
+                        // Price
+                        $win_price_raw = $item->getData('bid_price');
+                        $win_price = $helper->formatPrice($win_price_raw);
+                        // Time
+                        $bid_time = $helper->switchTimeZone($item->getData('updated_at'));
+                        $day_win_can_buy = $item->getData('days');
+                        try {
+                            $expiry_date = $helper->getExpiryTime($bid_time, $day_win_can_buy);
+                        } catch (Exception $e) {
+                            $expiry_date = null;
+                        }
+                        ?>
+                        <tr>
+                            <td data-th="<?= $escaper->escapeHtml(__('Product Name')) ?>" class="col product-name">
+                                <a href="<?= $escaper->escapeUrl($product_url) ?>" class="product-name">
+                                    <?= $escaper->escapeHtml($product_name) ?>
+                                </a>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Win Price')) ?>" class="col win-price">
+                                <?= $escaper->escapeHtml($win_price) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Product Price')) ?>" class="col product-price">
+                                <?= $escaper->escapeHtml($product_price) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Expiry Date')) ?>" class="col expiry-date">
+                                <?= $escaper->escapeHtml($expiry_date) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Action')) ?>" class="col action">
+                                <a href="#" class="action order"
+                                   title="<?= $escaper->escapeHtml(__('Order')) ?>"
+                                   aria-label="<?= $escaper->escapeHtml(__('Order')) ?>">
+                                    <?= $escaper->escapeHtml(__('Order')) ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

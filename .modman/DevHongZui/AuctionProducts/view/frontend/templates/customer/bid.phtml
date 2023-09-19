@@ -1,0 +1,102 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block BidProducts
+ * @var Escaper $escaper
+ * @var Data $helper
+ */
+
+use DevHongZui\AuctionProducts\Block\Customer\BidProducts;
+use DevHongZui\AuctionProducts\Helper\Data;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\NoSuchEntityException;
+
+?>
+<div class="block">
+    <?php
+    $items = $block->getList();
+    $count = count($items);
+    ?>
+    <div class="block-title">
+        <strong><?= $escaper->escapeHtml(__('Bid Products')) ?></strong>
+    </div>
+    <div class="block-content">
+        <?= $block->getChildHtml() ?>
+        <?php if ($count < 1) : ?>
+            <div class="message info empty">
+                <span><?= $escaper->escapeHtml(__('You have placed no products.')) ?></span>
+            </div>
+        <?php else : ?>
+            <div class="table-wrapper">
+                <table class="data table table-order-items recent">
+                    <caption class="table-caption"><?= $escaper->escapeHtml(__('Bid Products')) ?></caption>
+                    <thead>
+                    <tr>
+                        <th scope="col" class="col id">
+                            <?= $escaper->escapeHtml(__('Bid ID')) ?>
+                        </th>
+                        <th scope="col" class="col product">
+                            <?= $escaper->escapeHtml(__('Product')) ?>
+                        </th>
+                        <th scope="col" class="col bid-price">
+                            <?= $escaper->escapeHtml(__('Bid Price')) ?>
+                        </th>
+                        <th scope="col" class="col time">
+                            <?= $escaper->escapeHtml(__('Bid Time')) ?>
+                        </th>
+                        <th scope="col" class="col status">
+                            <?= $escaper->escapeHtml(__('Status')) ?>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $helper = $this->helper(Data::class);
+                    ?>
+                    <?php foreach ($items as $item) : ?>
+                        <?php
+                        $auction_bidder_id = $item->getId();
+                        $product_id = $item->getData('product_id');
+                        try {
+                            $product = $helper->getProductById($product_id);
+                            $product_name = $product->getName();
+                        } catch (NoSuchEntityException $e) {
+                            $product_name = null;
+                        }
+                        // Price
+                        $bid_price_raw = $item->getData('bid_price');
+                        $bid_price = $helper->formatPrice($bid_price_raw);
+                        // Time
+                        $bid_time = $helper->switchTimeZone($item->getData('updated_at'));
+
+                        $status = $item->getData('bid_status');
+                        $status_label = $helper->getBidStatusLabel($status);
+                        ?>
+                        <tr>
+                            <td data-th="<?= $escaper->escapeHtml(__('Bid ID')) ?>" class="col id">
+                                <?= $escaper->escapeHtml($auction_bidder_id) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Product')) ?>" class="col product">
+                                <?= $escaper->escapeHtml($product_name) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Bid Price')) ?>" class="col price">
+                                <?= $escaper->escapeHtml($bid_price) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Bid Time')) ?>" class="col time">
+                                <?= $escaper->escapeHtml($bid_time) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Status')) ?>" class="col status">
+                                <?= $escaper->escapeHtml($status_label) ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

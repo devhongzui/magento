@@ -6,6 +6,10 @@
  */
 
 namespace DevHongZui\AuctionProducts\Controller\Product;
-class Detail extends \Magento\Catalog\Controller\Product\View
+
+use Magento\Catalog\Controller\Product\View;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+
+class Detail extends View implements HttpGetActionInterface
 {
 }

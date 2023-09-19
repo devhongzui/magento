@@ -18,6 +18,7 @@ use Magento\Catalog\Model\Product\ProductList\ToolbarMemorizer;
 use Magento\Catalog\Model\Session;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Forward;
@@ -33,7 +34,7 @@ use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
-class Listing extends View
+class Listing extends View implements HttpGetActionInterface
 {
     private ToolbarMemorizer $toolbarMemorizer;
 

@@ -2,8 +2,13 @@
 
 namespace DevHongZui\AuctionProducts\Helper;
 
+use DateTimeImmutable;
 use DevHongZui\AuctionProducts\Model\Auction;
+use DevHongZui\AuctionProducts\Model\AuctionBidder;
 use DevHongZui\AuctionProducts\Model\AuctionProduct;
+use Exception;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ProductRepository;
 use Magento\Customer\Model\SessionFactory;
 use Magento\Customer\Model\Url;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -21,7 +26,13 @@ class Data extends AbstractHelper
     protected Url $url;
 
     protected Auction $auction;
+
+    protected AuctionBidder $auctionBidder;
+
     protected AuctionProduct $auctionProduct;
+
+
+    protected ProductRepository $productRepository;
 
     protected PricingHelperData $pricingHelperData;
 
@@ -30,7 +41,9 @@ class Data extends AbstractHelper
      * @param SessionFactory $sessionFactory
      * @param Url $url
      * @param Auction $auction
+     * @param AuctionBidder $auctionBidder
      * @param AuctionProduct $auctionProduct
+     * @param ProductRepository $productRepository
      * @param PricingHelperData $pricingHelperData
      * @param Context $context
      */
@@ -39,7 +52,9 @@ class Data extends AbstractHelper
         SessionFactory    $sessionFactory,
         Url               $url,
         Auction           $auction,
+        AuctionBidder     $auctionBidder,
         AuctionProduct    $auctionProduct,
+        ProductRepository $productRepository,
         PricingHelperData $pricingHelperData,
         Context           $context
     )
@@ -50,7 +65,9 @@ class Data extends AbstractHelper
         $this->sessionFactory = $sessionFactory;
         $this->url = $url;
         $this->auction = $auction;
+        $this->auctionBidder = $auctionBidder;
         $this->auctionProduct = $auctionProduct;
+        $this->productRepository = $productRepository;
         $this->pricingHelperData = $pricingHelperData;
     }
 
@@ -60,6 +77,21 @@ class Data extends AbstractHelper
     public function getCurrentTime(): string
     {
         return $this->timezone->date()->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * @param string $bid_time
+     * @param int $day_win_can_buy
+     * @return string
+     * @throws Exception
+     */
+    public function getExpiryTime(string $bid_time, int $day_win_can_buy): string
+    {
+        $date_time = new DateTimeImmutable($bid_time);
+
+        return $date_time
+            ->modify("+$day_win_can_buy day")
+            ->format('Y-m-d H:i:s');
     }
 
     /**
@@ -99,6 +131,15 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @param int $status
+     * @return string
+     */
+    public function getBidStatusLabel(int $status): string
+    {
+        return $this->auctionBidder->getStatusLabel($status);
+    }
+
+    /**
      * @param int $auction_product_id
      * @return float
      */
@@ -115,6 +156,16 @@ class Data extends AbstractHelper
     public function getHighestPriceByProductId(int $product_id): float
     {
         return $this->auctionProduct->getHighestPriceByProductId($product_id);
+    }
+
+    /**
+     * @param int $product_id
+     * @return Product
+     * @throws NoSuchEntityException
+     */
+    public function getProductById(int $product_id): Product
+    {
+        return $this->productRepository->getById($product_id);
     }
 
     /**

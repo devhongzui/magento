@@ -66,7 +66,7 @@ class Edit extends Action implements HttpGetActionInterface
     protected function getTitle(?int $id): string
     {
         if (is_null($id))
-            return __('New Auction Event');
+            return __('New Auction');
 
         $auction_model = $this->auctionFactory->create();
 
@@ -76,6 +76,6 @@ class Edit extends Action implements HttpGetActionInterface
 
         return $auction_id
             ? __('Auction ID %1', $auction_id)
-            : __("This auction event doesn't exist.");
+            : __("This auction doesn't exist");
     }
 }

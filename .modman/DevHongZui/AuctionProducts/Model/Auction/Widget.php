@@ -37,8 +37,8 @@ class Widget implements OptionSourceInterface
 
         foreach ($auction_product_collection as $item) {
             $data[] = [
-                'label' => sprintf(
-                    'Product: %s (Auction ID: %d - Product ID: %d)',
+                'label' => __(
+                    'Product: %1 (Auction ID: %2 - Product ID: %3)',
                     $item->getData('product_name'),
                     $item->getData('auction_id'),
                     $item->getData('product_id')

@@ -16,7 +16,7 @@
         <item name="buttons" xsi:type="array">
             <item name="add" xsi:type="array">
                 <item name="name" xsi:type="string">add</item>
-                <item name="label" xsi:type="string">Add New Auction</item>
+                <item name="label" xsi:type="string" translate="true">Add New Auction</item>
                 <item name="class" xsi:type="string">primary</item>
                 <item name="url" xsi:type="string">*/*/edit</item>
             </item>
@@ -54,11 +54,11 @@
                 <settings>
                     <confirm>
                         <message translate="true">Delete selected items?</message>
-                        <title translate="true">Delete items</title>
+                        <title translate="true">Mass Delete</title>
                     </confirm>
                     <url path="*/*/massDelete"/>
                     <type>delete</type>
-                    <label translate="true">Delete</label>
+                    <label translate="true">Mass Delete</label>
                 </settings>
             </action>
         </massaction>
@@ -159,7 +159,7 @@
             <settings>
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
-                <label translate="true">Last Updated At</label>
+                <label translate="true">Updated At</label>
             </settings>
         </column>
         <actionsColumn name="actions"

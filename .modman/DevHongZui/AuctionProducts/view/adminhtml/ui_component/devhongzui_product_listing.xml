@@ -87,7 +87,7 @@
             <settings>
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
-                <label translate="true">Last Updated At</label>
+                <label translate="true">Updated At</label>
             </settings>
         </column>
         <actionsColumn name="actions"

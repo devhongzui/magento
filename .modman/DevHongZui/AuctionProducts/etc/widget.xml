@@ -17,12 +17,12 @@
                 <description translate="true">Widget title</description>
             </parameter>
             <parameter name="title_image" xsi:type="block" required="false" visible="true">
-                <label translate="true">Image in Title</label>
+                <label translate="true">Image</label>
                 <description translate="true">Photo next to Title</description>
                 <block class="DevHongZui\AuctionProducts\Block\Adminhtml\Widget\ImageUploader">
                     <data>
                         <item name="button" xsi:type="array">
-                            <item name="open" xsi:type="string">Choose Image...</item>
+                            <item name="open" xsi:type="string" translate="true">Choose Image</item>
                         </item>
                     </data>
                 </block>
@@ -31,9 +31,9 @@
                 <label translate="true">View All Button</label>
                 <description translate="true">Label of the Show All Button</description>
             </parameter>
-            <parameter name="product_limit" xsi:type="text" required="true" visible="true">
+            <parameter name="product_limit" xsi:type="text" required="false" visible="true">
                 <label translate="true">Product Limit</label>
-                <description translate="true">Limit the number of products in Widget</description>
+                <description translate="true">Limit the number of products on Widget</description>
             </parameter>
             <parameter name="product_list" xsi:type="multiselect" required="true" visible="true"
                        source_model="DevHongZui\AuctionProducts\Model\Auction\Widget">

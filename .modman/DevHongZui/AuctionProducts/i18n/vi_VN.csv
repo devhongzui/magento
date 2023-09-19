@@ -7,3 +7,45 @@ Play Bid, Đấu giá
 Fast Bid, Đấu giá nhanh
 Ended, Đã kết thúc
 Auction Products, Sản phẩm đấu giá
+Start Price, Giá khởi điểm
+Reserve Price, Giá kết thúc
+Limit Price, Giá tối thiểu
+Highest Price, Giá cao nhất
+Bid Price, Giá đấu giá
+Bid ID, ID đấu giá
+Auction Status, Trạng thái đấu giá
+Bid Status, Trạng thái đấu giá
+Bid Time, Thời gian đấu giá
+Start At, Bắt đầu lúc
+Stop At, Kết thúc lúc
+Auction Product ID, ID sản phẩm đấu giá
+Add New Auction, Thêm đấu giá mới
+Auction Information, Thông tin đấu giá
+Bid List, Danh sách đấu giá
+Win Day Can Buy, Số ngày chiến thắng có thể mua
+Auction Product, Đấu giá sản phẩm
+New Auction, Đấu giá mới
+This auction doesn't exist, Đấu giá không tồn tại
+Auction ID %1, Đấu giá ID %1
+The status will be displayed after saving, Trạng thái sẽ hiển thị sau khi lưu
+Not Start, Chưa bắt đầu
+Finished, Đã hoàn thành
+Highest, Cao nhất
+Overed, Không thể mua
+Win, Chiến thắng
+Lose, Thất bại
+Bought, Có thể mua
+Delete item, Xóa mục
+Delete selected item?, Xóa mục đã chọn?
+Product Management, Quản lý Sản phẩm
+DevHongZui Auction Products, DevHongZui Đấu giá sản phẩm
+List of Products that are set as Auction, Danh sách sản phẩm được đặt là Đấu giá
+Widget title, Tiêu đề Widget
+Image, Ảnh
+Photo next to Title, Ảnh cạnh Tiêu đề
+View All Button, Nút Xem tất cả
+Label of the Show All Button, Nhãn của nút Xem tất cả
+Product Limit, Giới hạn sản phẩm
+Limit the number of products on Widget, Giới hạn số sản phẩm trong Widget
+The product will display on Widget, Sản phẩm sẽ hiển thị trong Widget
+Product: %1 (Auction ID: %2 - Product ID: %3), Sản phẩm: %1 (ID Đấu giá: %2 - ID Sản phẩm: %3)

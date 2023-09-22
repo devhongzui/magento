@@ -12,7 +12,6 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\View\Result\PageFactory;
 
 class Edit extends Action implements HttpGetActionInterface
@@ -21,26 +20,21 @@ class Edit extends Action implements HttpGetActionInterface
 
     protected AuctionFactory $auctionFactory;
 
-    protected DataPersistorInterface $dataPersistor;
-
     /**
      * @param Context $context
      * @param PageFactory $resultPageFactory
      * @param AuctionFactory $auctionFactory
-     * @param DataPersistorInterface $dataPersistor
      */
     public function __construct(
-        Context                $context,
-        PageFactory            $resultPageFactory,
-        AuctionFactory         $auctionFactory,
-        DataPersistorInterface $dataPersistor
+        Context        $context,
+        PageFactory    $resultPageFactory,
+        AuctionFactory $auctionFactory
     )
     {
         parent::__construct($context);
 
         $this->resultPageFactory = $resultPageFactory;
         $this->auctionFactory = $auctionFactory;
-        $this->dataPersistor = $dataPersistor;
     }
 
     /**
@@ -48,34 +42,30 @@ class Edit extends Action implements HttpGetActionInterface
      */
     public function execute(): Page
     {
-        $id = $this->getRequest()->getParam('id');
-
-        $this->dataPersistor->set('auction_id', $id);
-
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('DevHongZui_AuctionProducts::auction_product_manage');
-        $resultPage->getConfig()->getTitle()->prepend($this->getTitle($id));
+        $resultPage->getConfig()->getTitle()->prepend($this->getTitle());
         return $resultPage;
     }
 
     /**
-     * @param int|null $id
      * @return string
      */
-    protected function getTitle(?int $id): string
+    protected function getTitle(): string
     {
-        if (is_null($id))
-            return __('New Auction');
+        $id = $this->getRequest()->getParam('id');
 
-        $auction_model = $this->auctionFactory->create();
+        if ($id) {
+            $auction_model = $this->auctionFactory->create();
 
-        $auction_model->load($id);
+            $auction_id = $auction_model->load($id)->getId();
 
-        $auction_id = $auction_model->getId();
+            return $auction_id
+                ? __('Auction ID %1', $auction_id)
+                : __("This auction doesn't exist");
+        }
 
-        return $auction_id
-            ? __('Auction ID %1', $auction_id)
-            : __("This auction doesn't exist");
+        return __('New Auction');
     }
 }

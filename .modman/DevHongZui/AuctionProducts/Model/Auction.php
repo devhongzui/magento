@@ -226,12 +226,14 @@ class Auction extends AbstractModel implements IdentityInterface
             $stop_at_raw = $auction->getData('stop_at');
         }
 
-        $current_time_raw = $this->getCurrentTimeUTC();
-        $current_time = strtotime($current_time_raw);
-        $stop_at = strtotime($stop_at_raw);
+        if ($stop_at_raw) {
+            $current_time_raw = $this->getCurrentTimeUTC();
+            $current_time = strtotime($current_time_raw);
+            $stop_at = strtotime($stop_at_raw);
 
-        if ($current_time < $stop_at)
-            return __('Auctions can only be deleted when the timer expires');
+            if ($current_time < $stop_at)
+                return __('Auctions can only be deleted when the timer expires');
+        }
 
         return true;
     }

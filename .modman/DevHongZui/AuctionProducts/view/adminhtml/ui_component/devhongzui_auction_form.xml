@@ -186,9 +186,26 @@
         </settings>
         <insertListing name="devhongzui_bid_listing">
             <settings>
+                <dataLinks>
+                    <exports>false</exports>
+                    <imports>true</imports>
+                </dataLinks>
                 <loading>true</loading>
                 <autoRender>true</autoRender>
+                <externalProvider>
+                    devhongzui_bid_listing.devhongzui_bid_listing_data_source
+                </externalProvider>
+                <selectionsProvider>
+                    devhongzui_bid_listing.devhongzui_bid_listing.devhongzui_bid_columns.ids
+                </selectionsProvider>
+                <dataScope>devhongzui_bid_listing</dataScope>
                 <ns>devhongzui_bid_listing</ns>
+                <exports>
+                    <link name="parent_id">${ $.externalProvider }:params.parent_id</link>
+                </exports>
+                <imports>
+                    <link name="parent_id">${ $.provider}:data.general.entity_id</link>
+                </imports>
             </settings>
         </insertListing>
     </fieldset>
@@ -201,9 +218,26 @@
         </settings>
         <insertListing name="devhongzui_product_listing">
             <settings>
+                <dataLinks>
+                    <exports>false</exports>
+                    <imports>true</imports>
+                </dataLinks>
                 <loading>true</loading>
                 <autoRender>true</autoRender>
+                <externalProvider>
+                    devhongzui_product_listing.devhongzui_product_listing_data_source
+                </externalProvider>
+                <selectionsProvider>
+                    devhongzui_product_listing.devhongzui_product_listing.devhongzui_product_columns.ids
+                </selectionsProvider>
+                <dataScope>devhongzui_product_listing</dataScope>
                 <ns>devhongzui_product_listing</ns>
+                <exports>
+                    <link name="parent_id">${ $.externalProvider }:params.parent_id</link>
+                </exports>
+                <imports>
+                    <link name="parent_id">${ $.provider}:data.general.entity_id</link>
+                </imports>
             </settings>
         </insertListing>
     </fieldset>

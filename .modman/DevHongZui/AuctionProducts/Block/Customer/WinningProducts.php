@@ -51,9 +51,9 @@ class WinningProducts extends Template
         $auction_bidder_collection
             ->addFieldToFilter('customer_id', $customer_id)
             ->addFieldToFilter('bid_status', [
-                AuctionBidder::STATUS_WIN,
-                AuctionBidder::STATUS_BOUGHT,
-                AuctionBidder::STATUS_EXPIRED
+                AuctionBidder\Status::STATUS_WIN,
+                AuctionBidder\Status::STATUS_BOUGHT,
+                AuctionBidder\Status::STATUS_EXPIRED
             ])
             ->getSelect()
             ->joinLeft(

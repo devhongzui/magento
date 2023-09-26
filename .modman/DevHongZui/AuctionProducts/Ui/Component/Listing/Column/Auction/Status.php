@@ -2,33 +2,33 @@
 
 namespace DevHongZui\AuctionProducts\Ui\Component\Listing\Column\Auction;
 
-use DevHongZui\AuctionProducts\Model\Auction;
+use DevHongZui\AuctionProducts\Model\Auction\Status as AuctionStatus;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 class Status extends Column
 {
-    protected Auction $auction;
+    protected AuctionStatus $auctionStatus;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
-     * @param Auction $auction
+     * @param AuctionStatus $auctionStatus
      * @param array $components
      * @param array $data
      */
     public function __construct(
         ContextInterface   $context,
         UiComponentFactory $uiComponentFactory,
-        Auction            $auction,
+        AuctionStatus      $auctionStatus,
         array              $components = [],
         array              $data = []
     )
     {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->auction = $auction;
+        $this->auctionStatus = $auctionStatus;
     }
 
     /**
@@ -38,10 +38,10 @@ class Status extends Column
     public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items']))
-            foreach ($dataSource['data']['items'] as &$item)
-                $item[$this->getName()] = $this->auction->getStatusLabel(
-                    $item[$this->getName()]
-                );
+            foreach ($dataSource['data']['items'] as &$item) {
+                $name = $this->getName();
+                $item[$name] = $this->auctionStatus->getOptionText($item[$name]);
+            }
 
         return $dataSource;
     }

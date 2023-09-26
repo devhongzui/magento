@@ -94,7 +94,7 @@ $count = $products->getSize();
                 $status_label = __('Coming Soon');
             } else if (
                 $stop_at < $current_time ||
-                $status == DevHongZui\AuctionProducts\Model\Auction::STATUS_ENDED
+                $status == DevHongZui\AuctionProducts\Model\Auction\Status::STATUS_ENDED
             ) {
                 $is_ended = true;
                 $price_label = __('Hammer Price');

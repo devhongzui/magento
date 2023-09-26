@@ -40,10 +40,10 @@ class ProductName extends Column
     public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items']))
-            foreach ($dataSource['data']['items'] as &$item)
-                $item[$this->getName()] = $this->getProductName(
-                    $item[$this->getName()]
-                );
+            foreach ($dataSource['data']['items'] as &$item) {
+                $name = $this->getName();
+                $item[$name] = $this->getProductName($item[$name]);
+            }
 
         return $dataSource;
     }

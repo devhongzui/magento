@@ -2,6 +2,7 @@
 
 namespace DevHongZui\AuctionProducts\Model;
 
+use DevHongZui\AuctionProducts\Model\Auction\Status;
 use DevHongZui\AuctionProducts\Model\ResourceModel\AuctionProduct\CollectionFactory as AuctionProductCollectionFactory;
 use Exception;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
@@ -16,18 +17,6 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 class Auction extends AbstractModel implements IdentityInterface
 {
     const CACHE_TAG = 'devhongzui_auctionProducts_auction';
-
-    const STATUS_NOT_START = 0;
-
-    const STATUS_PROCESSING = 1;
-
-    const STATUS_FINISHED = 2;
-
-    const STATUS_CLOSED = 3;
-
-    const STATUS_DISABLED = 4;
-
-    const STATUS_ENDED = 5;
 
     protected $_cacheTag = self::CACHE_TAG;
 
@@ -138,7 +127,7 @@ class Auction extends AbstractModel implements IdentityInterface
 
         $auction_ids = $this->getCollection()
             ->addFieldToFilter('entity_id', ['neq' => $this->getId()])
-            ->addFieldToFilter('status', ['neq' => self::STATUS_ENDED])
+            ->addFieldToFilter('status', ['neq' => Status::STATUS_ENDED])
             ->addFieldToFilter('stop_at', ['gt' => $this->getCurrentTimeUTC()])
             ->getAllIds();
 
@@ -163,34 +152,6 @@ class Auction extends AbstractModel implements IdentityInterface
     protected function getCurrentTimeUTC(): string
     {
         return $this->timezone->date(useTimezone: false)->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllStatus(): array
-    {
-        return [
-            Auction::STATUS_NOT_START => __('Not Start'),
-            Auction::STATUS_PROCESSING => __('Processing'),
-            Auction::STATUS_FINISHED => __('Finished'),
-            Auction::STATUS_CLOSED => __('Closed'),
-            Auction::STATUS_DISABLED => __('Disabled'),
-            Auction::STATUS_ENDED => __('End')
-        ];
-    }
-
-    /**
-     * @param int|null $status
-     * @return string
-     */
-    public function getStatusLabel(int $status = null): string
-    {
-        $labels = $this->getAllStatus();
-
-        return is_null($status)
-            ? $labels[$this->getData('status')]
-            : $labels[$status];
     }
 
     /**

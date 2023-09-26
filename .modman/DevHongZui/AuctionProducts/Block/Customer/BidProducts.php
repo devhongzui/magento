@@ -42,11 +42,12 @@ class BidProducts extends Template
      */
     public function getList(): Collection
     {
-        $customer_id = $this->session->getCustomerId();
-
         $auction_bidder_collection = $this->auctionBidderCollectionFactory->create();
 
-        $auction_bidder_collection->addFieldToFilter('customer_id', $customer_id);
+        $auction_bidder_collection->addFieldToFilter(
+            'customer_id',
+            $this->session->getCustomerId()
+        );
 
         return $auction_bidder_collection;
     }

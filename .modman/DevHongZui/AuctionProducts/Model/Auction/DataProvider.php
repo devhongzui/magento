@@ -18,6 +18,8 @@ class DataProvider extends AbstractDataProvider
 
     protected RequestInterface $request;
 
+    protected Status $status;
+
     /**
      * @param string $name
      * @param string $primaryFieldName
@@ -26,6 +28,7 @@ class DataProvider extends AbstractDataProvider
      * @param DataPersistorInterface $dataPersistor
      * @param Auction $auction
      * @param RequestInterface $request
+     * @param Status $status
      * @param array $meta
      * @param array $data
      */
@@ -37,6 +40,7 @@ class DataProvider extends AbstractDataProvider
         DataPersistorInterface $dataPersistor,
         Auction $auction,
         RequestInterface $request,
+        Status $status,
         array $meta = [],
         array $data = []
     )
@@ -48,6 +52,7 @@ class DataProvider extends AbstractDataProvider
         $this->dataPersistor = $dataPersistor;
         $this->auction = $auction;
         $this->request = $request;
+        $this->status = $status;
         $this->loadedData = [];
     }
 
@@ -114,16 +119,17 @@ class DataProvider extends AbstractDataProvider
                     $this->loadedData[$id]['general']['limit_price']
                 );
 
-            $this->loadedData[$id]['general']['disabled'] = match ((int)$this->loadedData[$id]['general']['status']) {
-                Auction::STATUS_NOT_START,
-                Auction::STATUS_PROCESSING,
-                Auction::STATUS_FINISHED,
-                Auction::STATUS_ENDED => '0',
+            $this->loadedData[$id]['general']['disabled'] =
+                match ((int)$this->loadedData[$id]['general']['status']) {
+                    Status::STATUS_NOT_START,
+                    Status::STATUS_PROCESSING,
+                    Status::STATUS_FINISHED,
+                    Status::STATUS_ENDED => '0',
 
-                default => '1',
-            };
+                    default => '1',
+                };
 
-            $this->loadedData[$id]['general']['status'] = $this->auction->getStatusLabel(
+            $this->loadedData[$id]['general']['status'] = $this->status->getOptionText(
                 $this->loadedData[$id]['general']['status']
             );
         } else {

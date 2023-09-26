@@ -6,43 +6,19 @@
 
 namespace DevHongZui\AuctionProducts\Block\Adminhtml\Button;
 
-use DevHongZui\AuctionProducts\Model\Auction;
-use Magento\Backend\Block\Widget\Context;
-use Magento\Framework\App\RequestInterface;
 use Magento\Ui\Component\Control\Container;
 
 class SaveAndContinue extends Generic
 {
-    protected RequestInterface $request;
-
-    protected Auction $auction;
-
-    /**
-     * @param Context $context
-     * @param RequestInterface $request
-     * @param Auction $auction
-     */
-    public function __construct(
-        Context          $context,
-        RequestInterface $request,
-        Auction          $auction
-    )
-    {
-        parent::__construct($context);
-
-        $this->request = $request;
-        $this->auction = $auction;
-    }
-
     /**
      * @return array
      */
     public function getButtonData(): array
     {
-        $id = $this->request->getParam('id');
+        $id = $this->getModelId();
 
         if (
-            ($id && is_bool($this->auction->haveSave($id))) ||
+            ($id && $this->haveSave($id)) ||
             !$id
         )
             if ($this->auction->haveSave($id))

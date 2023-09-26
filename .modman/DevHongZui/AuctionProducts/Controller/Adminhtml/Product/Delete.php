@@ -51,9 +51,10 @@ class Delete extends Action implements HttpGetActionInterface, HttpPostActionInt
                 $exception->getMessage()
             ));
 
-            $id = $this->getRequest()->getParam('id') ?? null;
-
-            return $this->_redirect('*/*/edit', ['id' => $id]);
+            return $this->_redirect(
+                '*/*/edit', [
+                'id' => $this->getRequest()->getParam('id')
+            ]);
         }
     }
 }

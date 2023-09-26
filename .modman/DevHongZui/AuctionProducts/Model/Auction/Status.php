@@ -2,32 +2,36 @@
 
 namespace DevHongZui\AuctionProducts\Model\Auction;
 
-use DevHongZui\AuctionProducts\Model\Auction;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 
 class Status extends AbstractSource
 {
-    protected Auction $auction;
+    const STATUS_NOT_START = 0;
 
-    /**
-     * @param Auction $auction
-     */
-    public function __construct(Auction $auction)
-    {
-        $this->auction = $auction;
-    }
+    const STATUS_PROCESSING = 1;
+
+    const STATUS_FINISHED = 2;
+
+    const STATUS_CLOSED = 3;
+
+    const STATUS_DISABLED = 4;
+
+    const STATUS_ENDED = 5;
 
     /**
      * @return array
      */
     public function getAllOptions(): array
     {
-        if (is_null($this->_options)) {
-            $this->_options = [];
-
-            foreach ($this->auction->getAllStatus() as $value => $label)
-                $this->_options[] = ['label' => $label, 'value' => $value];
-        }
+        if (empty($this->_options))
+            $this->_options = [
+                ['value' => self::STATUS_NOT_START, 'label' => __('Not Start')],
+                ['value' => self::STATUS_PROCESSING, 'label' => __('Processing')],
+                ['value' => self::STATUS_FINISHED, 'label' => __('Finished')],
+                ['value' => self::STATUS_CLOSED, 'label' => __('Closed')],
+                ['value' => self::STATUS_DISABLED, 'label' => __('Disabled')],
+                ['value' => self::STATUS_ENDED, 'label' => __('End')]
+            ];
 
         return $this->_options;
     }

@@ -67,9 +67,10 @@ class Save extends Action implements HttpPostActionInterface
 
             $this->dataPersistor->set('auction', $this->getRequest()->getParams());
 
-            $id = $this->getRequest()->getParam('general')['entity_id'] ?? null;
-
-            return $this->_redirect('*/*/edit', ['id' => $id]);
+            return $this->_redirect(
+                '*/*/edit', [
+                'id' => $this->getRequest()->getParam('general')['entity_id'] ?? null
+            ]);
         }
     }
 
@@ -98,8 +99,8 @@ class Save extends Action implements HttpPostActionInterface
             'stop_at' => $general['stop_at'],
             'days' => $general['days'],
             'status' => $general['disabled'] == 1
-                ? Auction::STATUS_DISABLED
-                : Auction::STATUS_NOT_START,
+                ? Auction\Status::STATUS_DISABLED
+                : Auction\Status::STATUS_NOT_START,
         ];
     }
 }

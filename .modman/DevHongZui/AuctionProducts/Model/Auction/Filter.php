@@ -2,7 +2,6 @@
 
 namespace DevHongZui\AuctionProducts\Model\Auction;
 
-use DevHongZui\AuctionProducts\Model\Auction;
 use DevHongZui\AuctionProducts\Model\ResourceModel\Auction\CollectionFactory as AuctionCollectionFactory;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
@@ -71,7 +70,7 @@ class Filter extends AbstractFilter
         $auction_collection = $this->auctionCollectionFactory->create();
 
         $auction_collection
-            ->addFieldToFilter('status', ['neq' => Auction::STATUS_DISABLED])
+            ->addFieldToFilter('status', ['neq' => Status::STATUS_DISABLED])
             ->addFieldToSelect('entity_id');
 
         return $auction_collection->getAllIds();

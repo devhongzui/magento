@@ -27,6 +27,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\Page\Interceptor;
@@ -136,6 +137,7 @@ class Listing extends View implements HttpGetActionInterface
     /**
      * @return ResponseInterface|Forward|Redirect|ResultInterface|Page|null
      * @throws NoSuchEntityException
+     * @throws NotFoundException
      */
     public function execute(): Page|ResultInterface|ResponseInterface|Forward|Redirect|null
     {

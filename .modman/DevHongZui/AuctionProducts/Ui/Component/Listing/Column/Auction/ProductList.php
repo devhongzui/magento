@@ -38,10 +38,10 @@ class ProductList extends Column
     public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items']))
-            foreach ($dataSource['data']['items'] as &$item)
-                $item[$this->getName()] = $this->auction->getProductSkus(
-                    $item[$this->getName()]
-                );
+            foreach ($dataSource['data']['items'] as &$item) {
+                $name = $this->getName();
+                $item[$name] = $this->auction->getProductSkus($item[$name]);
+            }
 
         return $dataSource;
     }

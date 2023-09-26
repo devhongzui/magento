@@ -35,7 +35,6 @@ class Auction extends AbstractProduct implements BlockInterface, IdentityInterfa
      * @param FormKey $formKey
      * @param AuctionProductCollectionFactory $auctionProductCollectionFactory
      * @param AuctionProduct $auctionProduct
-     * @param ProductRepository $productRepository
      * @param array $data
      */
     public function __construct(

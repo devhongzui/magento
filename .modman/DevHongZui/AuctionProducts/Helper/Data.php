@@ -4,7 +4,7 @@ namespace DevHongZui\AuctionProducts\Helper;
 
 use DateTimeImmutable;
 use DevHongZui\AuctionProducts\Model\Auction;
-use DevHongZui\AuctionProducts\Model\AuctionBidder;
+use DevHongZui\AuctionProducts\Model\AuctionBidder\Status as AuctionBidderStatus;
 use DevHongZui\AuctionProducts\Model\AuctionProduct;
 use Exception;
 use Magento\Catalog\Model\Product;
@@ -27,7 +27,7 @@ class Data extends AbstractHelper
 
     protected Auction $auction;
 
-    protected AuctionBidder $auctionBidder;
+    protected AuctionBidderStatus $auctionBidderStatus;
 
     protected AuctionProduct $auctionProduct;
 
@@ -41,22 +41,22 @@ class Data extends AbstractHelper
      * @param SessionFactory $sessionFactory
      * @param Url $url
      * @param Auction $auction
-     * @param AuctionBidder $auctionBidder
+     * @param AuctionBidderStatus $auctionBidderStatus
      * @param AuctionProduct $auctionProduct
      * @param ProductRepository $productRepository
      * @param PricingHelperData $pricingHelperData
      * @param Context $context
      */
     public function __construct(
-        TimezoneInterface $timezone,
-        SessionFactory    $sessionFactory,
-        Url               $url,
-        Auction           $auction,
-        AuctionBidder     $auctionBidder,
-        AuctionProduct    $auctionProduct,
-        ProductRepository $productRepository,
-        PricingHelperData $pricingHelperData,
-        Context           $context
+        TimezoneInterface   $timezone,
+        SessionFactory      $sessionFactory,
+        Url                 $url,
+        Auction             $auction,
+        AuctionBidderStatus $auctionBidderStatus,
+        AuctionProduct      $auctionProduct,
+        ProductRepository   $productRepository,
+        PricingHelperData   $pricingHelperData,
+        Context             $context
     )
     {
         parent::__construct($context);
@@ -65,7 +65,7 @@ class Data extends AbstractHelper
         $this->sessionFactory = $sessionFactory;
         $this->url = $url;
         $this->auction = $auction;
-        $this->auctionBidder = $auctionBidder;
+        $this->auctionBidderStatus = $auctionBidderStatus;
         $this->auctionProduct = $auctionProduct;
         $this->productRepository = $productRepository;
         $this->pricingHelperData = $pricingHelperData;
@@ -132,11 +132,11 @@ class Data extends AbstractHelper
 
     /**
      * @param int $status
-     * @return string
+     * @return bool|string
      */
-    public function getBidStatusLabel(int $status): string
+    public function getBidStatusLabel(int $status): bool|string
     {
-        return $this->auctionBidder->getStatusLabel($status);
+        return $this->auctionBidderStatus->getOptionText($status);
     }
 
     /**

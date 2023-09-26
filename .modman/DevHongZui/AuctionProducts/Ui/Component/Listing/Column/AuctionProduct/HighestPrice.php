@@ -45,9 +45,7 @@ class HighestPrice extends Column
     {
         if (isset($dataSource['data']['items']))
             foreach ($dataSource['data']['items'] as &$item)
-                $item[$this->getName()] = $this->getHighestPrice(
-                    $item['entity_id']
-                );
+                $item[$this->getName()] = $this->getHighestPrice($item['entity_id']);
 
         return $dataSource;
     }

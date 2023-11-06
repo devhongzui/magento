@@ -1,0 +1,38 @@
+# Copyright VMware, Inc.
+# SPDX-License-Identifier: APACHE-2.0
+
+version: "2.1"
+
+services:
+  elasticsearch:
+    container_name: DevHongZui-Elasticsearch
+    restart: always
+    image: docker.io/bitnami/elasticsearch:7
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - "elasticsearch_data:/bitnami/elasticsearch/data"
+  rabbitmq:
+    container_name: DevHongZui-Rabbitmq
+    restart: always
+    image: docker.io/bitnami/rabbitmq:3.7
+    ports:
+      - "4369:4369"
+      - "5551:5551"
+      - "5552:5552"
+      - "5672:5672"
+      - "25672:25672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_PASSWORD=root
+      - RABBITMQ_LOGS=-
+    volumes:
+      - "rabbitmq_data:/bitnami/rabbitmq/mnesia"
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
